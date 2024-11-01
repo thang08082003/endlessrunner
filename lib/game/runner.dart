@@ -7,6 +7,7 @@ import '/game/enemy.dart';
 import '/game/run.dart';
 
 import '/models/player_data.dart';
+import 'audio_manager.dart';
 
 /// This enum represents the animation states of [Dino].
 enum DinoAnimationStates {
@@ -50,11 +51,10 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
   };
 
 
-  // The max distance from top of the screen beyond which
-  // dino should never go. Basically the screen height - ground height
+
   double yMax = 0.0;
 
-  // Dino's current speed along y-axis.
+
   double speedY = 0.0;
 
   // Controlls how long the hit animations will be played.
@@ -136,7 +136,7 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     if (isOnGround) {
       speedY = -300;
       current = DinoAnimationStates.idle;
-
+      AudioManager.instance.playSfx('jump14.wav');
     }
   }
 
@@ -145,11 +145,12 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
   /// effect and reduces the player life by 1.
   void hit() {
     isHit = true;
-
+    AudioManager.instance.playSfx('hurt7.wav');
     current = DinoAnimationStates.hit;
     _hitTimer.start();
     playerData.lives -= 1;
   }
+
 
   // This method reset some of the important properties
   // of this component back to normal.
