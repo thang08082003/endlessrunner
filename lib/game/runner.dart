@@ -20,10 +20,10 @@ enum DinoAnimationStates {
 // This represents the dino character of this game.
 class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     with CollisionCallbacks, HasGameReference<DinoRun> {
-  // A map of all the animation states and their corresponding animations.
+
   static final _animationMap = {
     DinoAnimationStates.idle: SpriteAnimationData.sequenced(
-      amount: 1, // Chỉ có 1 khung hình
+      amount: 1,
       stepTime: 0.1,
       textureSize: Vector2.all(24),
     ),

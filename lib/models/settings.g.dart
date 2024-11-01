@@ -37,7 +37,7 @@ class SettingsAdapter extends TypeAdapter<Settings> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SettingsAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+          other is SettingsAdapter &&
+              runtimeType == other.runtimeType &&
+              typeId == other.typeId;
 }

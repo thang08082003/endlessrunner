@@ -2,16 +2,17 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../game/run.dart';
 import '/widgets/hud.dart';
-import '/game/run.dart';
 
+import '/widgets/settings_menu.dart';
 
-
+// This represents the main menu overlay.
 class MainMenu extends StatelessWidget {
-
+  // An unique identified for this overlay.
   static const id = 'MainMenu';
 
-
+  // Reference to parent game.
   final DinoRun game;
 
   const MainMenu(this.game, {super.key});
@@ -23,20 +24,20 @@ class MainMenu extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           color: Colors.black.withAlpha(100),
           child: FittedBox(
             fit: BoxFit.scaleDown,
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
+              const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
               child: Wrap(
                 direction: Axis.vertical,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 spacing: 10,
                 children: [
                   const Text(
-                    'EndlessRunner',
+                    'Dino Run',
                     style: TextStyle(
                       fontSize: 50,
                       color: Colors.white,
@@ -50,6 +51,18 @@ class MainMenu extends StatelessWidget {
                     },
                     child: const Text(
                       'Play',
+                      style: TextStyle(
+                        fontSize: 30,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      game.overlays.remove(MainMenu.id);
+                      game.overlays.add(SettingsMenu.id);
+                    },
+                    child: const Text(
+                      'Settings',
                       style: TextStyle(
                         fontSize: 30,
                       ),

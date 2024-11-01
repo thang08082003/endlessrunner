@@ -5,13 +5,14 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'widgets/hud.dart';
 import 'game/run.dart';
+import 'widgets/hud.dart';
+
 import 'models/settings.dart';
 import 'widgets/main_menu.dart';
 import 'models/player_data.dart';
 import 'widgets/pause_menu.dart';
-
+import 'widgets/settings_menu.dart';
 import 'widgets/game_over_menu.dart';
 
 Future<void> main() async {
@@ -22,7 +23,7 @@ Future<void> main() async {
 
   // Initializes hive and register the adapters.
   await initHive();
-  runApp(const EndlessRunner());
+  runApp(const DinoRunApp());
 }
 
 // This function will initilize hive with apps documents directory.
@@ -39,14 +40,14 @@ Future<void> initHive() async {
 }
 
 // The main widget for this game.
-class EndlessRunner extends StatelessWidget {
-  const EndlessRunner({super.key});
+class DinoRunApp extends StatelessWidget {
+  const DinoRunApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'EnlessRunner',
+      title: 'Dino Run',
       theme: ThemeData(
         fontFamily: 'Audiowide',
         primarySwatch: Colors.blue,
@@ -75,7 +76,7 @@ class EndlessRunner extends StatelessWidget {
             PauseMenu.id: (_, game) => PauseMenu(game),
             Hud.id: (_, game) => Hud(game),
             GameOverMenu.id: (_, game) => GameOverMenu(game),
-
+            SettingsMenu.id: (_, game) => SettingsMenu(game),
           },
           // By default MainMenu overlay will be active.
           initialActiveOverlays: const [MainMenu.id],
