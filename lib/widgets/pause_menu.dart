@@ -1,40 +1,42 @@
 import 'dart:ui';
 
+import 'package:endlessrunner/models/player_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../game/dino_run.dart';
 import '/widgets/hud.dart';
-import '/game/run.dart';
+
 import '/widgets/main_menu.dart';
+import '/game/audio_manager.dart';
 
-import '/models/player_data.dart';
 
-// This represents the pause menu overlay.
+
 class PauseMenu extends StatelessWidget {
-  // An unique identified for this overlay.
+
   static const id = 'PauseMenu';
 
-  // Reference to parent game.
+
   final DinoRun game;
 
   const PauseMenu(this.game, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: game.playerData,
+    return ChangeNotifierProvider<PlayerModel>.value(
+      value: game.playerModel,
       child: Center(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Card(
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             color: Colors.black.withAlpha(100),
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
+                const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
                 child: Wrap(
                   direction: Axis.vertical,
                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -42,8 +44,8 @@ class PauseMenu extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(10),
-                      child: Selector<PlayerData, int>(
-                        selector: (_, playerData) => playerData.currentScore,
+                      child: Selector<PlayerModel, int>(
+                        selector: (_, playerModel) => playerModel.currentScore,
                         builder: (_, score, __) {
                           return Text(
                             'Score: $score',
@@ -58,7 +60,7 @@ class PauseMenu extends StatelessWidget {
                         game.overlays.remove(PauseMenu.id);
                         game.overlays.add(Hud.id);
                         game.resumeEngine();
-
+                        AudioManager.instance.resumeBgm();
                       },
                       child: const Text(
                         'Resume',
@@ -74,7 +76,7 @@ class PauseMenu extends StatelessWidget {
                         game.resumeEngine();
                         game.reset();
                         game.startGamePlay();
-
+                        AudioManager.instance.resumeBgm();
                       },
                       child: const Text(
                         'Restart',
@@ -89,7 +91,7 @@ class PauseMenu extends StatelessWidget {
                         game.overlays.add(MainMenu.id);
                         game.resumeEngine();
                         game.reset();
-
+                        AudioManager.instance.resumeBgm();
                       },
                       child: const Text(
                         'Exit',

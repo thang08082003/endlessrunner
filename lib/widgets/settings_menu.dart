@@ -3,14 +3,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../game/run.dart';
-import '/models/settings.dart';
+import '../game/dino_run.dart';
 import '/widgets/main_menu.dart';
 import '/game/audio_manager.dart';
+import '/models/game_settings.dart';
 
 class SettingsMenu extends StatelessWidget {
   static const id = 'SettingsMenu';
-
   final DinoRun game;
 
   const SettingsMenu(this.game, {super.key});
@@ -18,7 +17,7 @@ class SettingsMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
-      value: game.settings,
+      value: game.gameSettings,
       child: Center(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
@@ -30,12 +29,11 @@ class SettingsMenu extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20)),
               color: Colors.black.withAlpha(100),
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Selector<Settings, bool>(
+                    Selector<GameSettings, bool>(
                       selector: (_, settings) => settings.bgm,
                       builder: (context, bgm, __) {
                         return SwitchListTile(
@@ -48,11 +46,9 @@ class SettingsMenu extends StatelessWidget {
                           ),
                           value: bgm,
                           onChanged: (bool value) {
-                            Provider.of<Settings>(context, listen: false).bgm =
-                                value;
+                            Provider.of<GameSettings>(context, listen: false).updateBgm(value);
                             if (value) {
-                              AudioManager.instance
-                                  .startBgm('8BitPlatformerLoop.wav');
+                              AudioManager.instance.startBgm('8BitPlatformerLoop.wav');
                             } else {
                               AudioManager.instance.stopBgm();
                             }
@@ -60,7 +56,7 @@ class SettingsMenu extends StatelessWidget {
                         );
                       },
                     ),
-                    Selector<Settings, bool>(
+                    Selector<GameSettings, bool>(
                       selector: (_, settings) => settings.sfx,
                       builder: (context, sfx, __) {
                         return SwitchListTile(
@@ -73,8 +69,7 @@ class SettingsMenu extends StatelessWidget {
                           ),
                           value: sfx,
                           onChanged: (bool value) {
-                            Provider.of<Settings>(context, listen: false).sfx =
-                                value;
+                            Provider.of<GameSettings>(context, listen: false).updateSfx(value);
                           },
                         );
                       },

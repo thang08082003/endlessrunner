@@ -4,9 +4,9 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
 import '/game/enemy.dart';
-import '/game/run.dart';
+import '/game/dino_run.dart';
 
-import '/models/player_data.dart';
+import '/models/player_model.dart';
 import 'audio_manager.dart';
 
 /// This enum represents the animation states of [Dino].
@@ -21,52 +21,52 @@ enum DinoAnimationStates {
 // This represents the dino character of this game.
 class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     with CollisionCallbacks, HasGameReference<DinoRun> {
-
   static final _animationMap = {
     DinoAnimationStates.idle: SpriteAnimationData.sequenced(
-      amount: 1,
+      amount: 4,
       stepTime: 0.1,
       textureSize: Vector2.all(24),
     ),
     DinoAnimationStates.run: SpriteAnimationData.sequenced(
-      amount: 1, // Chỉ có 1 khung hình
+      amount: 6,
       stepTime: 0.1,
       textureSize: Vector2.all(24),
+      texturePosition: Vector2((4) * 24, 0),
     ),
     DinoAnimationStates.kick: SpriteAnimationData.sequenced(
-      amount: 1, // Chỉ có 1 khung hình
+      amount: 4,
       stepTime: 0.1,
       textureSize: Vector2.all(24),
+      texturePosition: Vector2((4 + 6) * 24, 0),
     ),
     DinoAnimationStates.hit: SpriteAnimationData.sequenced(
-      amount: 1, // Chỉ có 1 khung hình
+      amount: 3,
       stepTime: 0.1,
       textureSize: Vector2.all(24),
+      texturePosition: Vector2((4 + 6 + 4) * 24, 0),
     ),
     DinoAnimationStates.sprint: SpriteAnimationData.sequenced(
-      amount: 1, // Chỉ có 1 khung hình
+      amount: 7,
       stepTime: 0.1,
       textureSize: Vector2.all(24),
+      texturePosition: Vector2((4 + 6 + 4 + 3) * 24, 0),
     ),
   };
 
-
-
   double yMax = 0.0;
-
 
   double speedY = 0.0;
 
-  // Controlls how long the hit animations will be played.
+  // Controllers how long the hit animations will be played.
   final Timer _hitTimer = Timer(1);
 
   static const double gravity = 800;
 
-  final PlayerData playerData;
+  final PlayerModel playerModel;
 
   bool isHit = false;
 
-  Dino(Image image, this.playerData)
+  Dino(Image image, this.playerModel)
       : super.fromFrameData(image, _animationMap);
 
   @override
@@ -148,7 +148,9 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     AudioManager.instance.playSfx('hurt7.wav');
     current = DinoAnimationStates.hit;
     _hitTimer.start();
-    playerData.lives -= 1;
+
+    playerModel.decreaseLives();
+    playerModel.saveToFirestore();
   }
 
 
