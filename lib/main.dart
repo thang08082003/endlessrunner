@@ -41,7 +41,8 @@ class DinoRunApp extends StatelessWidget {
       ),
       routes: {
         '/register': (context) => RegisterScreen(),
-        '/main_menu': (context) => MainMenuWrapper(),
+        '/main_menu': (context) => const MainMenuWrapper(),
+        '/login': (context) => LoginScreen(),
       },
     );
   }

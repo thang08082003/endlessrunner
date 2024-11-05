@@ -5,8 +5,6 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
-
-
 import '../respository/game_setting_respository.dart';
 import '../respository/player_respository.dart';
 import '../widgets/game_over_menu.dart';
@@ -69,7 +67,8 @@ class DinoRun extends FlameGame with TapDetector, HasCollisionDetection {
 
     final whiteBackground = RectangleComponent(
       size: camera.viewport.size,
-      paint: Paint()..color = Colors.white,
+      paint: Paint()
+        ..color = Colors.white,
     );
     camera.backdrop.add(whiteBackground);
 
@@ -130,6 +129,7 @@ class DinoRun extends FlameGame with TapDetector, HasCollisionDetection {
     _disconnectActors();
     playerModel.currentScore = 0;
     playerModel.lives = 5;
+    playerModel.resetPlayerData();
   }
 
   @override
@@ -147,7 +147,6 @@ class DinoRun extends FlameGame with TapDetector, HasCollisionDetection {
     }
     super.update(dt);
   }
-
 
 
   @override
@@ -180,4 +179,5 @@ class DinoRun extends FlameGame with TapDetector, HasCollisionDetection {
     }
     super.lifecycleStateChange(state);
   }
+
 }

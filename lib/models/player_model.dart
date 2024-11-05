@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
-
 class PlayerModel extends ChangeNotifier {
   final String uid;
   int lives;
@@ -48,7 +47,6 @@ class PlayerModel extends ChangeNotifier {
   void increaseScore(int amount) {
     currentScore += amount;
 
-
     if (currentScore > highscore) {
       highscore = currentScore;
     }
@@ -64,9 +62,19 @@ class PlayerModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  void resetPlayerData() {
+    lives = 5;
+    currentScore = 0;
+    saveToFirestore();
+    notifyListeners();
+  }
 
-
-
+  void resetGame() {
+    lives = 5;
+    currentScore = 0;
+    saveToFirestore();
+    notifyListeners();
+  }
 
   static Stream<PlayerModel?> listenToPlayer(String uid) {
     return FirebaseFirestore.instance.collection('players').doc(uid).snapshots().map((snapshot) {
@@ -76,5 +84,4 @@ class PlayerModel extends ChangeNotifier {
       return null;
     });
   }
-
 }

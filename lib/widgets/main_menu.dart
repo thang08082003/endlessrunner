@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:endlessrunner/widgets/ranking_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../game/dino_run.dart';
 import '/widgets/hud.dart';
-
 import '/widgets/settings_menu.dart';
 
 class MainMenu extends StatelessWidget {
@@ -54,7 +54,6 @@ class MainMenu extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   ElevatedButton(
                     onPressed: () {
                       game.overlays.remove(MainMenu.id);
@@ -70,11 +69,23 @@ class MainMenu extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       showDialog(
-                          context: context,
-                          builder: (context) => RankingsMenu(),);
+                        context: context,
+                        builder: (context) => RankingsMenu(),
+                      );
                     },
                     child: const Text(
                       'Rankings',
+                      style: TextStyle(
+                        fontSize: 30,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await _signOut(context);
+                    },
+                    child: const Text(
+                      'Logout',
                       style: TextStyle(
                         fontSize: 30,
                       ),
@@ -87,5 +98,14 @@ class MainMenu extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.of(context).pushReplacementNamed('/login');
+    } catch (e) {
+      print('Error signing out: $e');
+    }
   }
 }
