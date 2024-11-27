@@ -9,7 +9,8 @@ class RegisterScreen extends StatelessWidget {
   final TextEditingController displayNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   RegisterScreen({super.key});
 
@@ -28,7 +29,6 @@ class RegisterScreen extends StatelessWidget {
       return;
     }
 
-
     UserModel? existingUser = await UserModel.getUserByEmail(email);
     if (existingUser != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -38,15 +38,13 @@ class RegisterScreen extends StatelessWidget {
     }
 
     try {
-
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-
       String uid = userCredential.user!.uid;
-
 
       UserModel newUser = UserModel(
         uid: uid,
@@ -56,17 +54,17 @@ class RegisterScreen extends StatelessWidget {
       );
       await newUser.saveToFirestore();
 
-      // Tạo đối tượng PlayerModel
-      PlayerModel newPlayer = PlayerModel(uid: uid, highscore: highscore, );
+      PlayerModel newPlayer = PlayerModel(
+        uid: uid,
+        highscore: 0,
+      );
       await newPlayer.saveToFirestore();
 
-      // Tạo đối tượng GameSettings
       GameSettings newSettings = GameSettings(uid: uid);
       await newSettings.saveToFirestore();
 
       Navigator.pushReplacementNamed(context, '/main_menu');
     } catch (e) {
-      // Xử lý lỗi khi đăng ký
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed: ${e.toString()}')),
       );

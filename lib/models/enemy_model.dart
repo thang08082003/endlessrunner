@@ -1,5 +1,6 @@
-import 'package:flame/extensions.dart';
+import 'dart:ui';
 
+import 'package:flame/components.dart';
 
 class EnemyData {
   final Image image;
@@ -8,13 +9,15 @@ class EnemyData {
   final Vector2 textureSize;
   final double speedX;
   final bool canFly;
+  final int damage;
 
-  const EnemyData({
+  EnemyData({
     required this.image,
     required this.nFrames,
     required this.stepTime,
     required this.textureSize,
     required this.speedX,
     required this.canFly,
+    required this.damage,
   });
 }

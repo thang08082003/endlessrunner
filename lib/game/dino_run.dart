@@ -16,22 +16,26 @@ import '/game/audio_manager.dart';
 import '/game/enemy_manager.dart';
 import '/models/player_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flame/parallax.dart';
 
 class DinoRun extends FlameGame with TapDetector, HasCollisionDetection {
-  int tempHighScore = 0;
+
 
   DinoRun({super.camera});
-
   static const _imageAssets = [
-    'dino.png',
-    'spikes.png',
-    'fly.png',
-    'run.png',
     'DinoSprites - tard.png',
     'AngryPig/Walk (36x30).png',
     'Bat/Flying (46x30).png',
     'Rino/Run (52x34).png',
+    'parallax/plx-1.png',
+    'parallax/plx-2.png',
+    'parallax/plx-3.png',
+    'parallax/plx-4.png',
+    'parallax/plx-5.png',
+    'parallax/plx-6.png',
   ];
+
+
 
   static const _audioAssets = [
     '8BitPlatformerLoop.wav',
@@ -63,16 +67,23 @@ class DinoRun extends FlameGame with TapDetector, HasCollisionDetection {
     AudioManager.instance.startBgm('8BitPlatformerLoop.wav');
 
     await images.loadAll(_imageAssets);
-    camera.viewfinder.position = camera.viewport.virtualSize * 0.5;
+    camera.viewfinder.position = camera.viewport.virtualSize *  0.5;
 
-    final whiteBackground = RectangleComponent(
-      size: camera.viewport.size,
-      paint: Paint()
-        ..color = Colors.white,
+    final parallaxBackground = await loadParallaxComponent(
+      [
+        ParallaxImageData('parallax/plx-1.png'),
+        ParallaxImageData('parallax/plx-2.png'),
+        ParallaxImageData('parallax/plx-3.png'),
+        ParallaxImageData('parallax/plx-4.png'),
+        ParallaxImageData('parallax/plx-5.png'),
+        ParallaxImageData('parallax/plx-6.png'),
+      ],
+      baseVelocity: Vector2(10, 0),
+      velocityMultiplierDelta: Vector2(1.4, 0),
     );
-    camera.backdrop.add(whiteBackground);
 
-    overlays.add(MainMenu.id);
+    camera.backdrop.add(parallaxBackground);
+
   }
 
   Future<PlayerModel> _readPlayerData() async {
@@ -85,12 +96,13 @@ class DinoRun extends FlameGame with TapDetector, HasCollisionDetection {
     PlayerModel? player = await playerRepository.getPlayer(uid);
 
     if (player == null) {
-      player = PlayerModel(uid: uid, highscore: highscore);
+      player = PlayerModel(uid: uid, highscore: 0);
       await playerRepository.createPlayer(player);
     }
 
     return player;
   }
+
 
   Future<GameSettings> _readSettings() async {
     User? user = FirebaseAuth.instance.currentUser;
@@ -135,7 +147,7 @@ class DinoRun extends FlameGame with TapDetector, HasCollisionDetection {
   @override
   void update(double dt) {
     if (playerModel.lives <= 0) {
-      tempHighScore = playerModel.currentScore;
+
 
       if (!overlays.isActive(GameOverMenu.id)) {
         pauseEngine();

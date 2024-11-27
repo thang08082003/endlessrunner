@@ -26,8 +26,5 @@ class UserRepository {
     }
   }
 
-  Future<void> updateHighScore(String uid, int newScore) async {
-    final userDoc = usersRef.doc(uid);
-    await userDoc.update({'high_score': newScore});
-  }
+
 }

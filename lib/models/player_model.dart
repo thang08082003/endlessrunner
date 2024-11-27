@@ -33,51 +33,44 @@ class PlayerModel extends ChangeNotifier {
   }
 
   Future<void> saveToFirestore() async {
-    await FirebaseFirestore.instance.collection('players').doc(uid).set(toMap());
+    await FirebaseFirestore.instance
+        .collection('players')
+        .doc(uid)
+        .set(toMap());
   }
 
-  static Future<PlayerModel?> getPlayerByUid(String uid) async {
-    final playerDoc = await FirebaseFirestore.instance.collection('players').doc(uid).get();
-    if (playerDoc.exists) {
-      return PlayerModel.fromMap(playerDoc.data()!);
-    }
-    return null;
-  }
-
-  void increaseScore(int amount) {
-    currentScore += amount;
-
+  void increaseScore(int damamge) {
+    currentScore += damamge;
     if (currentScore > highscore) {
       highscore = currentScore;
     }
 
     saveToFirestore();
-    notifyListeners();
   }
 
-  void decreaseLives() {
-    if (lives > 0) {
-      lives--;
-      saveToFirestore();
-      notifyListeners();
+  void decreaseLives(int damage) {
+    lives -= damage;
+    if (lives < 0) {
+      lives = 0;
     }
+    saveToFirestore();
   }
+
+
+
   void resetPlayerData() {
     lives = 5;
     currentScore = 0;
     saveToFirestore();
-    notifyListeners();
-  }
 
-  void resetGame() {
-    lives = 5;
-    currentScore = 0;
-    saveToFirestore();
-    notifyListeners();
   }
 
   static Stream<PlayerModel?> listenToPlayer(String uid) {
-    return FirebaseFirestore.instance.collection('players').doc(uid).snapshots().map((snapshot) {
+    return FirebaseFirestore.instance
+        .collection('players')
+        .doc(uid)
+        .snapshots()
+        .map((snapshot) {
       if (snapshot.exists) {
         return PlayerModel.fromMap(snapshot.data()!);
       }

@@ -1,7 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import '/game/dino_run.dart';
-import '/models/enemy_data.dart';
+import '/models/enemy_model.dart';
 
 class Enemy extends SpriteAnimationComponent
     with CollisionCallbacks, HasGameReference<DinoRun> {
@@ -33,12 +33,14 @@ class Enemy extends SpriteAnimationComponent
   }
 
   @override
+  @override
   void update(double dt) {
     position.x -= enemyData.speedX * dt;
 
     if (position.x < -enemyData.textureSize.x) {
       removeFromParent();
-      game.playerModel.increaseScore(1);
+
+      game.playerModel.increaseScore(enemyData.damage);
     }
 
     super.update(dt);

@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 
 import '/game/enemy.dart';
 import '/game/dino_run.dart';
-import '/models/enemy_data.dart';
+import '/models/enemy_model.dart';
 
 class EnemyManager extends Component with HasGameReference<DinoRun> {
   final List<EnemyData> _data = [];
@@ -18,7 +18,7 @@ class EnemyManager extends Component with HasGameReference<DinoRun> {
   }
 
   void spawnRandomEnemy() {
-    /// Generate a random index within [_data] and get an [EnemyData].
+
     final randomIndex = _random.nextInt(_data.length);
     final enemyData = _data.elementAt(randomIndex);
     final enemy = Enemy(enemyData);
@@ -26,7 +26,7 @@ class EnemyManager extends Component with HasGameReference<DinoRun> {
     enemy.anchor = Anchor.bottomLeft;
     enemy.position = Vector2(
       game.virtualSize.x + 32,
-      game.virtualSize.y - 24,
+      game.virtualSize.y -24,
     );
 
     if (enemyData.canFly) {
@@ -52,7 +52,7 @@ class EnemyManager extends Component with HasGameReference<DinoRun> {
           stepTime: 0.1,
           textureSize: Vector2(36, 30),
           speedX: 80,
-          canFly: false,
+          canFly: false, damage: 1,
         ),
         EnemyData(
           image: game.images.fromCache('Bat/Flying (46x30).png'),
@@ -60,7 +60,7 @@ class EnemyManager extends Component with HasGameReference<DinoRun> {
           stepTime: 0.1,
           textureSize: Vector2(46, 30),
           speedX: 100,
-          canFly: true,
+          canFly: true, damage: 2,
         ),
         EnemyData(
           image: game.images.fromCache('Rino/Run (52x34).png'),
@@ -68,7 +68,7 @@ class EnemyManager extends Component with HasGameReference<DinoRun> {
           stepTime: 0.09,
           textureSize: Vector2(52, 34),
           speedX: 150,
-          canFly: false,
+          canFly: false, damage: 3,
         ),
       ]);
     }

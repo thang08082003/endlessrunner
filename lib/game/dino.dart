@@ -9,16 +9,11 @@ import '/game/dino_run.dart';
 import '/models/player_model.dart';
 import 'audio_manager.dart';
 
-/// This enum represents the animation states of [Dino].
 enum DinoAnimationStates {
   idle,
-  run,
-  kick,
   hit,
-  sprint,
 }
 
-// This represents the dino character of this game.
 class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     with CollisionCallbacks, HasGameReference<DinoRun> {
   static final _animationMap = {
@@ -27,29 +22,11 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
       stepTime: 0.1,
       textureSize: Vector2.all(24),
     ),
-    DinoAnimationStates.run: SpriteAnimationData.sequenced(
-      amount: 6,
-      stepTime: 0.1,
-      textureSize: Vector2.all(24),
-      texturePosition: Vector2((4) * 24, 0),
-    ),
-    DinoAnimationStates.kick: SpriteAnimationData.sequenced(
-      amount: 4,
-      stepTime: 0.1,
-      textureSize: Vector2.all(24),
-      texturePosition: Vector2((4 + 6) * 24, 0),
-    ),
     DinoAnimationStates.hit: SpriteAnimationData.sequenced(
       amount: 3,
       stepTime: 0.1,
       textureSize: Vector2.all(24),
-      texturePosition: Vector2((4 + 6 + 4) * 24, 0),
-    ),
-    DinoAnimationStates.sprint: SpriteAnimationData.sequenced(
-      amount: 7,
-      stepTime: 0.1,
-      textureSize: Vector2.all(24),
-      texturePosition: Vector2((4 + 6 + 4 + 3) * 24, 0),
+      texturePosition: Vector2(14 * 24, 0),
     ),
   };
 
@@ -57,7 +34,6 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
 
   double speedY = 0.0;
 
-  // Controllers how long the hit animations will be played.
   final Timer _hitTimer = Timer(1);
 
   static const double gravity = 800;
@@ -71,11 +47,8 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
 
   @override
   void onMount() {
-    // First reset all the important properties, because onMount()
-    // will be called even while restarting the game.
     _reset();
 
-    // Add a hitbox for dino.
     add(
       RectangleHitbox.relative(
         Vector2(0.5, 0.7),
@@ -85,9 +58,7 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     );
     yMax = y;
 
-    /// Set the callback for [_hitTimer].
     _hitTimer.onTick = () {
-      current = DinoAnimationStates.run;
       isHit = false;
     };
 
@@ -96,43 +67,32 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
 
   @override
   void update(double dt) {
-    // v = u + at
     speedY += gravity * dt;
 
-    // d = s0 + s * t
     y += speedY * dt;
 
-    /// This code makes sure that dino never goes beyond [yMax].
     if (isOnGround) {
       y = yMax;
       speedY = 0.0;
-      if ((current != DinoAnimationStates.hit) &&
-          (current != DinoAnimationStates.run)) {
-        current = DinoAnimationStates.run;
-      }
     }
 
     _hitTimer.update(dt);
     super.update(dt);
   }
 
-  // Gets called when dino collides with other Collidables.
+  @override
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    // Call hit only if other component is an Enemy and dino
-    // is not already in hit state.
-    if ((other is Enemy) && (!isHit)) {
-      hit();
+    if (other is Enemy && !isHit) {
+      hit(other);
     }
     super.onCollision(intersectionPoints, other);
   }
 
-  // Returns true if dino is on ground.
+
   bool get isOnGround => (y >= yMax);
 
-  // Makes the dino jump.
   void jump() {
-    // Jump only if dino is on ground.
     if (isOnGround) {
       speedY = -300;
       current = DinoAnimationStates.idle;
@@ -140,22 +100,18 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     }
   }
 
-  // This method changes the animation state to
-  /// [DinoAnimationStates.hit], plays the hit sound
-  /// effect and reduces the player life by 1.
-  void hit() {
+  void hit(Enemy enemy) {
     isHit = true;
     AudioManager.instance.playSfx('hurt7.wav');
     current = DinoAnimationStates.hit;
     _hitTimer.start();
 
-    playerModel.decreaseLives();
+
+    playerModel.decreaseLives(enemy.enemyData.damage);
     playerModel.saveToFirestore();
   }
 
 
-  // This method reset some of the important properties
-  // of this component back to normal.
   void _reset() {
     if (isMounted) {
       removeFromParent();
@@ -163,8 +119,9 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     anchor = Anchor.bottomLeft;
     position = Vector2(32, game.virtualSize.y - 22);
     size = Vector2.all(24);
-    current = DinoAnimationStates.run;
+
     isHit = false;
     speedY = 0.0;
   }
 }
+
