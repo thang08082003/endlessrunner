@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import '../models/user_model.dart';
 import '../models/player_model.dart';
 import '../models/game_settings.dart';
@@ -9,12 +8,9 @@ class RegisterScreen extends StatelessWidget {
   final TextEditingController displayNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
   RegisterScreen({super.key});
-
-  get highscore => null;
 
   Future<void> register(BuildContext context) async {
     String displayName = displayNameController.text;
@@ -38,8 +34,7 @@ class RegisterScreen extends StatelessWidget {
     }
 
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -77,34 +72,35 @@ class RegisterScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Register')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Xóa trường username
-            TextField(
-              controller: displayNameController,
-              decoration: const InputDecoration(labelText: 'Display Name'),
-            ),
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            TextField(
-              controller: confirmPasswordController,
-              decoration: const InputDecoration(labelText: 'Confirm Password'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => register(context),
-              child: const Text('Register'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextField(
+                controller: displayNameController,
+                decoration: const InputDecoration(labelText: 'Display Name'),
+              ),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              TextField(
+                controller: passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
+              ),
+              TextField(
+                controller: confirmPasswordController,
+                decoration: const InputDecoration(labelText: 'Confirm Password'),
+                obscureText: true,
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () => register(context),
+                child: const Text('Register'),
+              ),
+            ],
+          ),
         ),
       ),
     );
