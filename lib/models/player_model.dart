@@ -6,12 +6,14 @@ class PlayerModel extends ChangeNotifier {
   int lives;
   int currentScore;
   int highscore;
+  DateTime? highScoreDateTime;
 
   PlayerModel({
     required this.uid,
     this.lives = 5,
     this.currentScore = 0,
     required this.highscore,
+    this.highScoreDateTime,
   });
 
   factory PlayerModel.fromMap(Map<String, dynamic> data) {
@@ -20,6 +22,9 @@ class PlayerModel extends ChangeNotifier {
       lives: data['lives'] ?? 5,
       currentScore: data['current_score'] ?? 0,
       highscore: data['highScore'] ?? 0,
+      highScoreDateTime: data['datetime'] != null
+          ? (data['datetime'] as Timestamp).toDate()
+          : null,
     );
   }
 
@@ -28,7 +33,10 @@ class PlayerModel extends ChangeNotifier {
       'uid': uid,
       'lives': lives,
       'current_score': currentScore,
-      'highScore': highscore
+      'highScore': highscore,
+      'datetime': highScoreDateTime != null
+          ? Timestamp.fromDate(highScoreDateTime!)
+          : FieldValue.serverTimestamp(),
     };
   }
 
@@ -39,30 +47,33 @@ class PlayerModel extends ChangeNotifier {
         .set(toMap());
   }
 
-  void increaseScore(int damamge) {
-    currentScore += damamge;
+  Future<void> increaseScore(int damage) async {
+    currentScore += damage;
     if (currentScore > highscore) {
       highscore = currentScore;
+      highScoreDateTime = DateTime.now();
+
+
     }
 
-    saveToFirestore();
+    await saveToFirestore();
+    notifyListeners();
   }
 
-  void decreaseLives(int damage) {
+  Future<void> decreaseLives(int damage) async {
     lives -= damage;
     if (lives < 0) {
       lives = 0;
     }
-    saveToFirestore();
+    await saveToFirestore();
+    notifyListeners();
   }
 
-
-
-  void resetPlayerData() {
+  Future<void> resetPlayerData() async {
     lives = 5;
     currentScore = 0;
-    saveToFirestore();
-
+    await saveToFirestore();
+    notifyListeners();
   }
 
   static Stream<PlayerModel?> listenToPlayer(String uid) {
