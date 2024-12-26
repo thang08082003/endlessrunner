@@ -107,9 +107,9 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     _hitTimer.start();
 
 
-    playerModel.decreaseLives(enemy.enemyData.damage);
-    playerModel.saveToFirestore();
+    playerModel.decreaseHealth(enemy.enemyData.damage);
   }
+
 
 
   void _reset() {

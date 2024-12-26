@@ -8,19 +8,30 @@ class RegisterScreen extends StatelessWidget {
   final TextEditingController displayNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   RegisterScreen({super.key});
 
   Future<void> register(BuildContext context) async {
-    String displayName = displayNameController.text;
-    String email = emailController.text;
-    String password = passwordController.text;
-    String confirmPassword = confirmPasswordController.text;
+    String displayName = displayNameController.text.trim();
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+    String confirmPassword = confirmPasswordController.text.trim();
 
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
+
+    if (!_isStrongPassword(password)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Password must be at least 6 characters, include a special character and an uppercase letter')),
       );
       return;
     }
@@ -34,7 +45,8 @@ class RegisterScreen extends StatelessWidget {
     }
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -58,12 +70,25 @@ class RegisterScreen extends StatelessWidget {
       GameSettings newSettings = GameSettings(uid: uid);
       await newSettings.saveToFirestore();
 
-      Navigator.pushReplacementNamed(context, '/main_menu');
+      await userCredential.user!.sendEmailVerification();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content:
+                Text('Registration successful. Please verify your email.')),
+      );
+      Navigator.pushReplacementNamed(context, '/login');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed: ${e.toString()}')),
       );
     }
+  }
+
+  bool _isStrongPassword(String password) {
+    final passwordRegex =
+        RegExp(r'^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[a-z]).{6,}$');
+    return passwordRegex.hasMatch(password);
   }
 
   @override
@@ -91,7 +116,8 @@ class RegisterScreen extends StatelessWidget {
               ),
               TextField(
                 controller: confirmPasswordController,
-                decoration: const InputDecoration(labelText: 'Confirm Password'),
+                decoration:
+                    const InputDecoration(labelText: 'Confirm Password'),
                 obscureText: true,
               ),
               const SizedBox(height: 10),

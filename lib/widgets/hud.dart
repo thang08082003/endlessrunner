@@ -19,48 +19,73 @@ class Hud extends StatelessWidget {
       initialData: null,
       child: Padding(
         padding: const EdgeInsets.only(top: 10.0),
-        child: Consumer<PlayerModel?>(
-          builder: (context, playerModel, child) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+        child: Consumer<PlayerModel?>(builder: (context, playerModel, child) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    'Score: ${playerModel?.currentScore ?? 0}',
+                    style: const TextStyle(fontSize: 20, color: Colors.black),
+                  ),
+                ],
+              ),
+              TextButton(
+                onPressed: () {
+                  game.overlays.remove(Hud.id);
+                  game.overlays.add(PauseMenu.id);
+                  game.pauseEngine();
+                  AudioManager.instance.pauseBgm();
+                },
+                child: const Icon(Icons.pause, color: Colors.black),
+              ),
+              // Lives and Health Bar
+              if (playerModel != null)
                 Column(
                   children: [
-                    Text(
-                      'Score: ${playerModel?.currentScore ?? 0}',
-                      style: const TextStyle(fontSize: 20, color: Colors.black),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(5, (index) {
+                        if (index < playerModel.lives) {
+                          return const Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          );
+                        } else {
+                          return const Icon(
+                            Icons.favorite_border,
+                            color: Colors.red,
+                          );
+                        }
+                      }),
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      width: 100,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 1),
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.grey[300],
+                      ),
+                      child: FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: playerModel.health / 10,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.green,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                TextButton(
-                  onPressed: () {
-                    game.overlays.remove(Hud.id);
-                    game.overlays.add(PauseMenu.id);
-                    game.pauseEngine();
-                    AudioManager.instance.pauseBgm();
-                  },
-                  child: const Icon(Icons.pause, color: Colors.black),
-                ),
-                Row(
-                  children: List.generate(5, (index) {
-                    if (playerModel != null && index < playerModel.lives) {
-                      return const Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                      );
-                    } else {
-                      return const Icon(
-                        Icons.favorite_border,
-                        color: Colors.red,
-                      );
-                    }
-                  }),
-                ),
-              ],
-            );
-          },
-        ),
+            ],
+          );
+        }),
       ),
     );
   }
