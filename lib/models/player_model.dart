@@ -64,10 +64,10 @@ class PlayerModel extends ChangeNotifier {
   Future<void> decreaseHealth(int damage) async {
     health -= damage;
     if (health <= 0) {
-      health = 10; // Reset health
-      lives -= 1; // Lose one life
+      health = 10;
+      lives -= 1;
       if (lives < 0) {
-        lives = 0; // Ensure lives are not negative
+        lives = 0;
       }
     }
     await saveToFirestore();

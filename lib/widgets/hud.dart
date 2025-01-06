@@ -41,7 +41,7 @@ class Hud extends StatelessWidget {
                 },
                 child: const Icon(Icons.pause, color: Colors.black),
               ),
-              // Lives and Health Bar
+
               if (playerModel != null)
                 Column(
                   children: [

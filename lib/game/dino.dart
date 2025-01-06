@@ -1,11 +1,8 @@
 import 'dart:ui';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-
 import '/game/enemy.dart';
 import '/game/dino_run.dart';
-
 import '/models/player_model.dart';
 import 'audio_manager.dart';
 
@@ -89,7 +86,6 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     super.onCollision(intersectionPoints, other);
   }
 
-
   bool get isOnGround => (y >= yMax);
 
   void jump() {
@@ -106,11 +102,8 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     current = DinoAnimationStates.hit;
     _hitTimer.start();
 
-
     playerModel.decreaseHealth(enemy.enemyData.damage);
   }
-
-
 
   void _reset() {
     if (isMounted) {
@@ -124,4 +117,3 @@ class Dino extends SpriteAnimationGroupComponent<DinoAnimationStates>
     speedY = 0.0;
   }
 }
-
